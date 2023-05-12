@@ -1,5 +1,6 @@
 import { castrApi } from "../../utils/castrApi";
 
+const streamName = process.env.STREAM_NAME;
 
 export async function GET(request) {
 
@@ -17,7 +18,7 @@ export async function GET(request) {
   };
 
   streams.forEach((stream) => {
-    if(stream.name == "UNIVERSO TEST") {
+    if(stream.name == streamName) {
       console.log(stream);
       
       streamData.stream.streamId      = stream.id;
