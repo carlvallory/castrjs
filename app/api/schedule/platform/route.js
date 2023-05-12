@@ -1,6 +1,8 @@
 import { sheetApi, SHEETID, APIKEY } from "../../../utils/sheetApi";
 import { castrApi } from "../../../utils/castrApi";
 
+const streamName = process.env.STREAM_NAME;
+
 export async function GET(request) {
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const now = new Date();
@@ -77,7 +79,7 @@ export async function getUpdate(status, init, run) {
   const streams = await getStreams();
 
   streams.forEach((stream) => {
-    if(stream.name == "UNIVERSO TEST") {
+    if(stream.name == streamName) {
       console.log(stream);
       
       streamData.stream.streamId      = stream.id;
