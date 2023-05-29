@@ -114,6 +114,7 @@ export async function getUpdate(status, init, run) {
   
     if(Boolean(platformData.platform.platformEnable) == true && status == true && run == true && init == false) {
       platformObj = await stopPlatform(streamData.stream.streamId, platform.platformId);
+      renameVideo = await renameVideo(videoId, newTitle);
     }
     
     console.log(platformObj);
@@ -149,5 +150,12 @@ export async function startPlatform(streamId, platformId) {
 export async function stopPlatform(streamId, platformId) {
   let url = "/streams/"+streamId+"/platforms/"+platformId+"/disable";
   const { data } = await castrApi.patch(url);
+  return data;
+}
+
+export async function renameVideo(videoId, newTitle) {
+  let url = "/update-title?v="+videoId+"?title="+newTitle;
+  const { data } = await laratubeApi.get(url);
+
   return data;
 }

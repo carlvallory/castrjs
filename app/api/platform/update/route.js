@@ -1,4 +1,5 @@
 import { castrApi } from "../../../utils/castrApi";
+import { laratubeApi } from "../../../utils/laratubeApi";
 
 export async function GET(request) {
 
@@ -89,6 +90,13 @@ export async function startPlatform(streamId, platformId) {
 export async function stopPlatform(streamId, platformId) {
   let url = "/streams/"+streamId+"/platforms/"+platformId+"/disable";
   const { data } = await castrApi.patch(url);
+
+  return data;
+}
+
+export async function renameVideo(videoId, newTitle) {
+  let url = "/update-title?v="+videoId+"?title="+newTitle;
+  const { data } = await laratubeApi.get(url);
 
   return data;
 }
