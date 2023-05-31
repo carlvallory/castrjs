@@ -1,5 +1,6 @@
 import { castrApi } from "../../../utils/castrApi";
 
+
 export async function GET(request) {
 
   const streams = await getStreams();
@@ -28,22 +29,21 @@ export async function GET(request) {
     }
   });
 
-  const startData = await startStream(streamData.stream.streamId)
+  const platformData = await getPlatform(streamData.stream.streamId, streamData.stream.platformId);
 
-  console.log(startData);
+  console.log(platformData);
 
-  return new Response(streamData.stream.streamId);
+  return new Response(streamData.stream.platformId);
   
 }
 
-export async function getStreams() {
+async function getStreams() {
   const { data } = await castrApi.get('/streams');
   return data;
 }
 
-export async function startStream(streamId) {
-  let url = "/streams/"+streamId+"/enable";
-  const { data } = await castrApi.patch(url);
-
+async function getPlatform(streamId, platformId) {
+  let url = "/streams/"+streamId+"/platforms/"+platformId+"/ingest";
+  const { data } = await castrApi.get(url);
   return data;
 }

@@ -1,4 +1,5 @@
-import { castrApi } from "../../../utils/castrApi";
+import { castrApi } from "../../../../utils/castrApi";
+import { laratubeApi } from "../../../../utils/laratubeApi";
 
 export async function GET(request) {
 
@@ -20,7 +21,7 @@ export async function GET(request) {
       platformName:   "",
       platformDate:   ""
     }
-};
+  };
 
   streams.forEach((stream) => {
     if(stream.name == "UNIVERSO TEST") {
@@ -47,32 +48,47 @@ export async function GET(request) {
   });
 
   const platform = await getPlatforms(streamData.stream.streamId, platformData.platform.platformId);
+  let platformObj;
 
   if(platform.rtmpServer.includes("youtube")) {
 
-    const startData = await startPlatform(streamData.stream.streamId, platform.platformId);
-    console.log(startData);
+    if(Boolean(platformData.platform.platformEnable) == false) {
+      platformObj = await startPlatform(streamData.stream.streamId, platform.platformId);
+    }
+  
+    if(Boolean(platformData.platform.platformEnable) == true) {
+      platformObj = await stopPlatform(streamData.stream.streamId, platform.platformId);
+    }
+    
+    console.log(platformObj);
 
-    return new Response(startData.message);
+    return new Response(platformObj.message);
   } 
 
   return new Response(platformData.platform.platformId);
   
 }
 
-export async function getStreams() {
+async function getStreams() {
   const { data } = await castrApi.get('/streams');
   return data;
 }
 
-export async function getPlatforms(streamId, platformId) {
+async function getPlatforms(streamId, platformId) {
   let url = "/streams/"+streamId+"/platforms/"+platformId+"/ingest";
   const { data } = await castrApi.get(url);
   return data;
 }
 
-export async function startPlatform(streamId, platformId) {
+async function startPlatform(streamId, platformId) {
   let url = "/streams/"+streamId+"/platforms/"+platformId+"/enable";
+  const { data } = await castrApi.patch(url);
+
+  return data;
+}
+
+async function stopPlatform(streamId, platformId) {
+  let url = "/streams/"+streamId+"/platforms/"+platformId+"/disable";
   const { data } = await castrApi.patch(url);
 
   return data;

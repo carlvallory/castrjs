@@ -1,9 +1,7 @@
-import { castrApi } from "../../utils/castrApi";
-
+import { castrApi } from '../../../../utils/castrApi';
 
 export async function GET(request) {
 
-  
   const streams = await getStreams();
 
   const streamData = {
@@ -30,20 +28,33 @@ export async function GET(request) {
     }
   });
 
-  const startData = await  stopStream(streamData.stream.streamId);
+  if(streamData.stream.streamEnable == false) {
+    const streamObj = await startStream(streamData.stream.streamId);
+  }
 
-  console.log(startData);
+  if(streamData.stream.streamEnable == true) {
+    const streamObj = await stopStream(streamData.stream.streamId);
+  }
+
+  console.log(streamData);
 
   return new Response(streamData.stream.streamId);
-  
+
 }
 
-export async function getStreams() {
+async function getStreams() {
   const { data } = await castrApi.get('/streams');
   return data;
 }
 
-export async function stopStream(streamId) {
+async function startStream(streamId) {
+  let url = "/streams/"+streamId+"/enable";
+  const { data } = await castrApi.patch(url);
+
+  return data;
+}
+
+async function stopStream(streamId) {
   let url = "/streams/"+streamId+"/disable";
   const { data } = await castrApi.patch(url);
 

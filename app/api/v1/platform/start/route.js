@@ -1,4 +1,4 @@
-import { castrApi } from "../../../utils/castrApi";
+import { castrApi } from "../../../../utils/castrApi";
 
 export async function GET(request) {
 
@@ -50,7 +50,7 @@ export async function GET(request) {
 
   if(platform.rtmpServer.includes("youtube")) {
 
-    const startData = await stopPlatform(streamData.stream.streamId, platform.platformId);
+    const startData = await startPlatform(streamData.stream.streamId, platform.platformId);
     console.log(startData);
 
     return new Response(startData.message);
@@ -60,19 +60,19 @@ export async function GET(request) {
   
 }
 
-export async function getStreams() {
+async function getStreams() {
   const { data } = await castrApi.get('/streams');
   return data;
 }
 
-export async function getPlatforms(streamId, platformId) {
+async function getPlatforms(streamId, platformId) {
   let url = "/streams/"+streamId+"/platforms/"+platformId+"/ingest";
   const { data } = await castrApi.get(url);
   return data;
 }
 
-export async function stopPlatform(streamId, platformId) {
-  let url = "/streams/"+streamId+"/platforms/"+platformId+"/disable";
+async function startPlatform(streamId, platformId) {
+  let url = "/streams/"+streamId+"/platforms/"+platformId+"/enable";
   const { data } = await castrApi.patch(url);
 
   return data;

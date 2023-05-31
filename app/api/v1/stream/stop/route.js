@@ -1,9 +1,9 @@
-import { castrApi } from "../../utils/castrApi";
+import { castrApi } from "../../../../utils/castrApi";
 
-const streamName = process.env.STREAM_NAME;
 
 export async function GET(request) {
 
+  
   const streams = await getStreams();
 
   const streamData = {
@@ -18,7 +18,7 @@ export async function GET(request) {
   };
 
   streams.forEach((stream) => {
-    if(stream.name == streamName) {
+    if(stream.name == "UNIVERSO TEST") {
       console.log(stream);
       
       streamData.stream.streamId      = stream.id;
@@ -30,22 +30,22 @@ export async function GET(request) {
     }
   });
 
-  //const streamObj = await getStream(streamId);
+  const startData = await  stopStream(streamData.stream.streamId);
 
-  console.log(streamData);
+  console.log(startData);
 
   return new Response(streamData.stream.streamId);
   
 }
 
-export async function getStreams() {
+async function getStreams() {
   const { data } = await castrApi.get('/streams');
   return data;
 }
 
-export async function getStream(streamId) {
-  let url = "/stream/" + streamId;
-  console.log(url);
-  const { data } = await castrApi.get(url);
+async function stopStream(streamId) {
+  let url = "/streams/"+streamId+"/disable";
+  const { data } = await castrApi.patch(url);
+
   return data;
 }

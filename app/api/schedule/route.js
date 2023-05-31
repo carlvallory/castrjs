@@ -55,12 +55,12 @@ export async function GET(request) {
   
 }
 
-export async function getJson(url) {
+async function getJson(url) {
   const { data } = await sheetApi.get(url);
   return data;
 }
 
-export async function getPlatform() {
+async function getPlatform() {
   const { data } = await platformApi.get('/update');
   return data;
 }
