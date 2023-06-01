@@ -55,7 +55,8 @@ export async function GET(request) {
           videoResource = await getVideo(platformResult.youtube.channel.url);
 
           if(init == false) {
-            renamedVideo = await renameVideo(videoResource.youtube.video.videoId, newTitle);
+            $code = getCode(null);
+            renamedVideo = await renameVideo(videoResource.youtube.video.videoId, newTitle, $code);
             console.log(renamedVideo);
           } else { 
             console.log(videoResource); 
@@ -207,7 +208,14 @@ async function getVideo(channelUrl) {
   }
 }
 
-async function renameVideo(videoId, newTitle) {
+async function getCode($code) {
+
+  const { data } = await laraoauthApi.get();
+  console.log(data);
+  return data;
+}
+
+async function renameVideo(videoId, newTitle, $code) {
   console.log(videoId);
   console.log(newTitle);
   let url = "/update-title?v="+videoId+"&title="+newTitle;
