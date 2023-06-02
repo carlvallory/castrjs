@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.15",
     "axios": "^1.4.0",
     "debug": "^4.3.4",
     "google-auth-library": "^8.8.0",

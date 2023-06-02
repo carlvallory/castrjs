@@ -1,4 +1,5 @@
 import { sheetApi, SHEETID, APIKEY } from "../../../utils/sheetApi";
+import { laraoauthApi } from "../../../utils/laraoauthApi";
 import { laratubeApi } from "../../../utils/laratubeApi";
 import { castrApi } from "../../../utils/castrApi";
 import { youtube } from "googleapis/build/src/apis/youtube";
@@ -19,6 +20,7 @@ export async function GET(request) {
   let run = false;
   let platformResult = { updated: false };
   let videoResource = { updated: false };
+  let code = null;
   let renamedVideo = false;
   
   let videoId = false;
@@ -55,8 +57,8 @@ export async function GET(request) {
           videoResource = await getVideo(platformResult.youtube.channel.url);
 
           if(init == false) {
-            $code = getCode(null);
-            renamedVideo = await renameVideo(videoResource.youtube.video.videoId, newTitle, $code);
+            code = getCode();
+            renamedVideo = await renameVideo(videoResource.youtube.video.videoId, newTitle, code);
             console.log(renamedVideo);
           } else { 
             console.log(videoResource); 
@@ -203,26 +205,33 @@ async function getVideo(channelUrl) {
     const tubeResponse = await fetch(NEXTAUTH_URL+"/api/youtube/channel/list?id="+channelId);
     const { youtubeResponse } = await tubeResponse.json();
     return youtubeResponse;
-  }  catch (error) {
+  } catch (error) {
     console.error(error.response.data);
   }
 }
 
-async function getCode($code) {
-
-  const { data } = await laraoauthApi.get();
-  console.log(data);
-  return data;
+async function getCode() {
+  try {
+    const { data } = await laraoauthApi.get();
+    return data;
+  } catch (error) {
+    console.error(error.response.data);
+  }
 }
 
-async function renameVideo(videoId, newTitle, $code) {
+async function renameVideo(videoId, newTitle, jsonCode) {
   console.log(videoId);
   console.log(newTitle);
-  let url = "/update-title?v="+videoId+"&title="+newTitle;
-  const { data } = await laratubeApi.get(url);
-  console.debug(data);
-
-  return data;
+  console.log(jsonCode);
+  let code = jsonCode.codeVerifier;
+  try {
+    let url = "/update-title?v="+videoId+"&title="+newTitle+"&code="+code;
+    const { data } = await laratubeApi.get(url);
+    console.debug(data);
+    return data;
+  } catch (error) {
+    console.error(error.response.data);
+  }
 }
 
 function parseChannelUrl(channelURL) {
